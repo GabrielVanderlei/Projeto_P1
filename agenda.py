@@ -69,23 +69,48 @@ def prioridadeValida(pri):
   
   return False
 
-
 # Valida a hora. Consideramos que o dia tem 24 horas, como no Brasil, ao invés
 # de dois blocos de 12 (AM e PM), como nos EUA.
-def horaValida(horaMin) :
-  if len(horaMin) != 4 or not soDigitos(horaMin):
-    return False
-  else:
-    ################ COMPLETAR
-    return True
+def horaValida(horaMin) : 
+  '''Tarefa 3: Complete a implementação da função horaValida() . Essa função recebe um string e verifica se ele
+  tem exatamente quatro caracteres, se tão todos dígitos, se os dois primeiros formam um número entre 00 e 23 e
+  se os dois últimos formam um número inteiro entre 00 e 59. Se tudo isso for verdade, ela devolve True. Caso
+  contrário, False. O arquivo já inclui uma função auxiliar para verificar se todos os caracteres de um string são
+  dígitos.'''
+  if len(horaMin) == 4 and soDigitos(horaMin):
+    if 0 <= int(horaMin[:2]) <= 23:
+      if 0 <= int(horaMin[2:]) <= 59:
+        return True
+  return False
 
 # Valida datas. Verificar inclusive se não estamos tentando
 # colocar 31 dias em fevereiro. Não precisamos nos certificar, porém,
 # de que um ano é bissexto. 
 def dataValida(data) :
-
-  ################ COMPLETAR
-
+  '''Tarefa 4: Implemente a função dataValida() . Essa função recebe um string e verifica se ele tem exatamente
+  oito caracteres, se tão todos dígitos e se os dois primeiros correspondem a um dia válido, se o terceiro e o quarto
+  correspondem a um mês válido e se os quatro últimos correspondem a um ano válido. Sua função deve checar tam-
+  bém se o dia e o mês fazem sentido juntos. Além de verificar se o mês é um número entre 1 e 12, dataValida()
+  deve checar se o dia poderia ocorrer naquele mês, por exemplo, ela deve devolver False caso o dia seja 31 mas o
+  mês seja 04, que tem apenas 30 dias. O ano pode ser qualquer número de 4 dígitos. Para fevereiro, considere que
+  pode haver até 29 dias, sem se preocupar se o ano é bissexto ou não. Se todas as verificações passarem, a função
+  devolve True. Caso contrário, False.'''
+  if len(data) == 8 and soDigitos(data):
+    if (
+      (1 <= data[:2] <= 31 and data[2:4] == 1) or    
+      (1 <= data[:2] <= 29 and data[2:4] == 2) or    
+      (1 <= data[:2] <= 31 and data[2:4] == 3) or    
+      (1 <= data[:2] <= 30 and data[2:4] == 4) or    
+      (1 <= data[:2] <= 31 and data[2:4] == 5) or    
+      (1 <= data[:2] <= 30 and data[2:4] == 6) or    
+      (1 <= data[:2] <= 31 and data[2:4] == 7) or    
+      (1 <= data[:2] <= 31 and data[2:4] == 8) or    
+      (1 <= data[:2] <= 30 and data[2:4] == 9) or    
+      (1 <= data[:2] <= 31 and data[2:4] == 10) or 
+      (1 <= data[:2] <= 30 and data[2:4] == 11) or 
+      (1 <= data[:2] <= 31 and data[2:4] == 12)           
+    ):
+      return True
   return False
 
 # Valida que o string do projeto está no formato correto. 
@@ -249,4 +274,18 @@ def processarComandos(comandos) :
 # sys.argv terá como conteúdo
 #
 # ['agenda.py', 'a', 'Mudar', 'de', 'nome']
-processarComandos(sys.argv)
+#processarComandos(sys.argv)
+
+def debuger(comandos):
+  if comandos[1] == 'h':
+    return horaValida(comandos[2])
+  elif comandos[1] == 'd':
+    return dataValida(comandos[2])
+  elif comandos[1] == 'p':
+    return prioridadeValida(comandos[2])
+  elif comandos[1] == 'c':
+    return contextoValido(comandos[2])
+  elif comandos[1] == 'p':
+    return projetoValido(comandos[2])
+
+print(debuger(sys.argv))
