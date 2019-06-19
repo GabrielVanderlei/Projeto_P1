@@ -64,9 +64,17 @@ def adicionar(descricao, extras):
 
 # Valida a prioridade.
 def prioridadeValida(pri):
-
-  ################ COMPLETAR
-  
+  '''Tarefa 7: Implemente a função prioridadeValida(). Essa função recebe um string e verifica se ele tem exata-
+  mente três caracteres, se o primeiro é ‘(’, se o terceiro é ‘)’ e se o segundo é uma letra entre A e Z. A função
+  deve funcionar tanto para letras minúsculas quanto maiúsculas. Devolve True se as verificações passarem e False
+  caso contrário.'''
+  if len(pri) == 3:
+    if pri[0] == '(' and pri[2] == ')':
+      if (
+        'a' <= pri[1] <= 'z' or
+        'A' <= pri[1] <= 'Z' 
+      ):
+        return True
   return False
 
 # Valida a hora. Consideramos que o dia tem 24 horas, como no Brasil, ao invés
@@ -97,34 +105,38 @@ def dataValida(data) :
   devolve True. Caso contrário, False.'''
   if len(data) == 8 and soDigitos(data):
     if (
-      (1 <= data[:2] <= 31 and data[2:4] == 1) or    
-      (1 <= data[:2] <= 29 and data[2:4] == 2) or    
-      (1 <= data[:2] <= 31 and data[2:4] == 3) or    
-      (1 <= data[:2] <= 30 and data[2:4] == 4) or    
-      (1 <= data[:2] <= 31 and data[2:4] == 5) or    
-      (1 <= data[:2] <= 30 and data[2:4] == 6) or    
-      (1 <= data[:2] <= 31 and data[2:4] == 7) or    
-      (1 <= data[:2] <= 31 and data[2:4] == 8) or    
-      (1 <= data[:2] <= 30 and data[2:4] == 9) or    
-      (1 <= data[:2] <= 31 and data[2:4] == 10) or 
-      (1 <= data[:2] <= 30 and data[2:4] == 11) or 
-      (1 <= data[:2] <= 31 and data[2:4] == 12)           
+      (1 <= int(data[:2]) <= 31 and int(data[2:4]) == 1) or    
+      (1 <= int(data[:2]) <= 29 and int(data[2:4]) == 2) or    
+      (1 <= int(data[:2]) <= 31 and int(data[2:4]) == 3) or    
+      (1 <= int(data[:2]) <= 30 and int(data[2:4]) == 4) or    
+      (1 <= int(data[:2]) <= 31 and int(data[2:4]) == 5) or    
+      (1 <= int(data[:2]) <= 30 and int(data[2:4]) == 6) or    
+      (1 <= int(data[:2]) <= 31 and int(data[2:4]) == 7) or    
+      (1 <= int(data[:2]) <= 31 and int(data[2:4]) == 8) or    
+      (1 <= int(data[:2]) <= 30 and int(data[2:4]) == 9) or    
+      (1 <= int(data[:2]) <= 31 and int(data[2:4]) == 10) or 
+      (1 <= int(data[:2]) <= 30 and int(data[2:4]) == 11) or 
+      (1 <= int(data[:2]) <= 31 and int(data[2:4]) == 12)           
     ):
       return True
   return False
 
 # Valida que o string do projeto está no formato correto. 
 def projetoValido(proj):
-
-  ################ COMPLETAR
-
+  '''Tarefa 5: Implemente a função projetoValido(). Essa função recebe um string e verifica se ele tem pelo menos
+  dois caracteres e se o primeiro é ‘+’. Devolve True se as verificações passarem e False caso contrário.'''
+  if len(proj) >= 2:
+    if proj[0] == '+':
+      return True
   return False
 
 # Valida que o string do contexto está no formato correto. 
 def contextoValido(cont):
-
-  ################ COMPLETAR
-
+  '''Tarefa 6: Implemente a função contextoValido(). Essa função recebe um string e verifica se ele tem pelo me-
+  nos dois caracteres e se o primeiro é ‘@’. Devolve True se as verificações passarem e False caso contrário.'''
+  if len(cont) >= 2:
+    if cont[0] == '@':
+      return True
   return False
 
 # Valida que a data ou a hora contém apenas dígitos, desprezando espaços
@@ -153,8 +165,10 @@ def soDigitos(numero) :
 # data que não tem todos os componentes ou prioridade com mais de um caractere (além dos parênteses),
 # tudo que vier depois será considerado parte da descrição.  
 def organizar(linhas):
+  '''Tarefa 8: Complete a implementação da função organizar(). Como dito antes, essa função recebe uma lista de
+  strings representando atividades e devolve uma lista de tuplas com as informações dessas atividades organizadas.'''
   itens = []
-
+  
   for l in linhas:
     data = '' 
     hora = ''
@@ -174,9 +188,33 @@ def organizar(linhas):
     # para saber se são contexto e/ou projeto. Quando isso terminar, o que sobrar
     # corresponde à descrição. É só transformar a lista de tokens em um string e
     # construir a tupla com as informações disponíveis. 
+    print(len(tokens))
+    if len(tokens) > 0:
+      if dataValida(tokens[0]):
+        data = tokens[0]
+        tokens.pop(0)
+    
+    if len(tokens) > 0:
+      if horaValida(tokens[0]):
+        hora = tokens[0]
+        tokens.pop(0)
 
-    ################ COMPLETAR
+    if len(tokens) > 0:
+      if prioridadeValida(tokens[0]):
+        pri = tokens[0]
+        tokens.pop(0)
+    
+    if len(tokens) > 0:
+      if projetoValido(tokens[(len(tokens)-1)]):
+        projeto = tokens[(len(tokens)-1)]
+        tokens.pop((len(tokens)-1))
 
+    if len(tokens) > 0:
+      if contextoValido(tokens[(len(tokens)-1)]):
+        contexto = tokens[(len(tokens)-1)]
+        tokens.pop((len(tokens)-1))
+    
+    desc = ' '.join(tokens)
     itens.append((desc, (data, hora, pri, contexto, projeto)))
 
   return itens
@@ -274,6 +312,7 @@ def processarComandos(comandos) :
 # sys.argv terá como conteúdo
 #
 # ['agenda.py', 'a', 'Mudar', 'de', 'nome']
+
 #processarComandos(sys.argv)
 
 def debuger(comandos):
@@ -287,5 +326,10 @@ def debuger(comandos):
     return contextoValido(comandos[2])
   elif comandos[1] == 'p':
     return projetoValido(comandos[2])
+  elif comandos[1] == 'o':
+    comandos.pop(0)
+    comandos.pop(0)
+    print(comandos)
+    return organizar([' '.join(comandos)])
 
 print(debuger(sys.argv))
