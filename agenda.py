@@ -27,7 +27,7 @@ def printCores(texto, cor) :
   print(cor + texto + RESET)
   
 
-# Adiciona um compromisso aa agenda. Um compromisso tem no minimo
+# Adiciona um compromisso a agenda. Um compromisso tem no minimo
 # uma descrição. Adicionalmente, pode ter, em caráter opcional, uma
 # data (formato DDMMAAAA), um horário (formato HHMM), uma prioridade de A a Z, 
 # um contexto onde a atividade será realizada (precedido pelo caractere
@@ -40,14 +40,36 @@ def printCores(texto, cor) :
 # Qualquer elemento da tupla que contenha um string vazio ('') não
 # deve ser levado em consideração. 
 def adicionar(descricao, extras):
+  '''Tarefa 9: Complete a implementação da função adicionar(), que adiciona um compromisso à agenda. Um
+  compromisso tem no mínimo uma descrição. Adicionalmente, pode ter, em caráter opcional, uma data, um horário, 
+  um contexto e um projeto. Esses itens opcionais são os elementos da tupla extras, o segundo parâmetro da
+  função. Veja os comentários do código para saber como essa tupla é organizada. Todos os elementos dessa tupla
+  precisam ser validados (com as funções definidas nas tarefas anteriores). Qualquer elemento da tupla que não passe
+  pela validação deve ser ignorado.'''
 
   # não é possível adicionar uma atividade que não possui descrição. 
   if descricao  == '' :
     return False
   
+  # data, hora, prioridade, contexto, projeto
+  novaAtividade = ''
+  
+  if dataValida(extras[0]):
+    novaAtividade += extras[0] + " "
+    
+  if horaValida(extras[1]):
+    novaAtividade += extras[1] + " "
+    
+  if prioridadeValida(extras[2]):
+    novaAtividade += extras[2] + " "
 
-  ################ COMPLETAR
-
+  novaAtividade += descricao + " "
+    
+  if contextoValido(extras[3]):
+    novaAtividade += extras[3] + " "
+    
+  if projetoValido(extras[4]):
+    novaAtividade += extras[4] + " "
 
   # Escreve no TODO_FILE. 
   try: 
@@ -188,7 +210,7 @@ def organizar(linhas):
     # para saber se são contexto e/ou projeto. Quando isso terminar, o que sobrar
     # corresponde à descrição. É só transformar a lista de tokens em um string e
     # construir a tupla com as informações disponíveis. 
-    print(len(tokens))
+
     if len(tokens) > 0:
       if dataValida(tokens[0]):
         data = tokens[0]
@@ -228,19 +250,52 @@ def organizar(linhas):
 # determinado projeto; (vi) atividades de determinado dia (data específica, hoje ou amanhã). Isso não
 # é uma das tarefas básicas do projeto, porém. 
 def listar():
+  '''Tarefa 11: Modifique a função listar() para ler o conteúdo do arquivo todo.txt em uma lista de strings e
+  organizar esses strings em uma lista de tuplas, usando a função organizar().'''
+  
+  fp = open(TODO_FILE, 'r')
+  conteudo = fp.read()
+  listaDeStrings = conteudo.split('\n')
+  listaDeTuplas = organizar(listaDeStrings)
+  return ordenarPorDataHora(listaDeTuplas)
 
-  ################ COMPLETAR
-  return 
+def ordemDataHora(itens):
+  # Criado pelo aluno
+  # Usado em ordenarPorDataHora
+  return itens[1][0] and itens[1][1]
+
+def ordenar():
+  return
 
 def ordenarPorDataHora(itens):
-
-  ################ COMPLETAR
-
+  '''Tarefa 12: Construa uma função ordenarPorDataHora() que, dada uma lista de itens como a produzida por
+  organizar(), com os itens já ordenados por prioridade, devolve uma lista que tem os mesmos itens, ordenados
+  com base em suas datas e horas. Quanto mais antiga a data de um item, mais próximo do topo da lista o item deve
+  estar. Itens que não têm data ou hora aparecem sempre no final, sem nenhuma ordem em particular. Modifique a
+  função listar() que faça uso de ordenarPorDataHora().'''
+  itens.sort(key=ordemDataHora, reverse=True)
   return itens
    
 def ordenarPorPrioridade(itens):
+  '''Tarefa 13: Construa uma função ordenarPorPrioridade() que, dada uma lista de itens como a produzida por
+  organizar(), devolve uma lista que tem os mesmos itens, ordenados com base em suas prioridades, onde itens com
+  prioridades mais altas (e.g., A), aparecem antes daqueles com prioridades mais baixas (e.g., Z). Itens que não têm
+  prioridade aparecem sempre no final, sem qualquer ordem particular. Sua função deve garantir que, se uma lista de
+  itens já estava ordenada por data e hora, essa ordem é mantida para cada prioridade (mas não entre prioridades).
+  Por exemplo, se antes a lista estava ordenada por data e havia nela os seguintes itens:
+  20052017 (B)
+  21052017 (A)
+  22052017 (B)
+  Após a execução de ordenarPorPrioridade(), a lista passaria a estar ordenada da seguinte maneira:
+  21052017 (A)
+  20052017 (B)
+  22052017 (B)
+  ou seja, o item com a prioridade A passou a aparecer primeiro mas os itens com prioridade B continuam apresentando
+   a mesma ordem entre si. Modifique a função listar() que faça uso de ordenarPorPrioridade().'''
+  
+  for item in itens:
+    prioridade = item[2]
 
-  ################ COMPLETAR
 
   return itens
 
@@ -274,15 +329,19 @@ def priorizar(num, prioridade):
 # usando o método strip(). Além disso, realiza a validação de horas, datas, prioridades, contextos e
 # projetos. 
 def processarComandos(comandos) :
+
   if comandos[1] == ADICIONAR:
     comandos.pop(0) # remove 'agenda.py'
     comandos.pop(0) # remove 'adicionar'
     itemParaAdicionar = organizar([' '.join(comandos)])[0]
+    
     # itemParaAdicionar = (descricao, (prioridade, data, hora, contexto, projeto))
     adicionar(itemParaAdicionar[0], itemParaAdicionar[1]) # novos itens não têm prioridade
   elif comandos[1] == LISTAR:
-    return    
-    ################ COMPLETAR
+    '''Tarefa 10: Modifique a função processarComandos() para que, ao receber o comando l, invoque a função
+    listar().''' 
+    listar()
+    return
 
   elif comandos[1] == REMOVER:
     return    
@@ -331,5 +390,11 @@ def debuger(comandos):
     comandos.pop(0)
     print(comandos)
     return organizar([' '.join(comandos)])
+  elif comandos[1] == 'l':
+    return listar()
+  elif comandos[1] == 'a':
+    print(comandos)
+    return  processarComandos(comandos)
+  
 
 print(debuger(sys.argv))
