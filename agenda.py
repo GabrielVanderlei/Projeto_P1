@@ -26,7 +26,6 @@ LISTAR = 'l'
 def printCores(texto, cor) :
   print(cor + texto + RESET)
   
-
 # Adiciona um compromisso a agenda. Um compromisso tem no minimo
 # uma descrição. Adicionalmente, pode ter, em caráter opcional, uma
 # data (formato DDMMAAAA), um horário (formato HHMM), uma prioridade de A a Z, 
@@ -76,6 +75,7 @@ def adicionar(descricao, extras):
     fp = open(TODO_FILE, 'a')
     fp.write(novaAtividade + "\n")
     fp.close()
+    print("Adicionado")
   except IOError as err:
     print("Não foi possível escrever para o arquivo " + TODO_FILE)
     print(err)
@@ -237,7 +237,9 @@ def organizar(linhas):
         tokens.pop((len(tokens)-1))
     
     desc = ' '.join(tokens)
-    itens.append((desc, (data, hora, pri, contexto, projeto)))
+
+    if desc != '':
+      itens.append((desc, (data, hora, pri, contexto, projeto)))
 
   return itens
 
@@ -257,7 +259,124 @@ def listar():
   conteudo = fp.read()
   listaDeStrings = conteudo.split('\n')
   listaDeTuplas = organizar(listaDeStrings)
-  return ordenarPorDataHora(listaDeTuplas)
+  listaOrdenada = ordenarPorPrioridade(ordenarPorDataHora(listaDeTuplas))
+
+  '''Tarefa 14:Modifique a função listar()para que liste as atividades no 
+  arquivo todo.txt. Os itens devem serlistados na ordem 
+  definida anteriormente, com itens nas prioridades A-D
+  aparecendo em cores e itens com priori-dadeAtambém em negrito. 
+  Além disso, deve aparecer a numeração dos 
+  itens, como explicado antes nesta seção,de 
+  modo que possa ser usada pelas funções da próxima seção.'''
+  listaComCores = colorir(listaOrdenada)
+  listaComAEmNegrito = AEmNegrito(listaComCores)
+
+  contador = 0
+  for item in listaComAEmNegrito:
+    if item[0] != "":
+      print(str(contador + 1) + " - " + montarAtividade(item))
+    contador += 1
+  return 
+
+def montarAtividade(item):
+  conteudoAtividade = ""
+
+  if item[1][0] != "":
+    conteudoAtividade += item[1][0] + " "
+  if item[1][1] != "":
+    conteudoAtividade += item[1][1] + " "
+  if item[1][2] != "":
+    conteudoAtividade += item[1][2] + " "
+  if item[0] != "":
+    conteudoAtividade += item[0] + " "
+  if item[1][3] != "":
+    conteudoAtividade += item[1][3] + " "
+  if item[1][4] != "":
+    conteudoAtividade += item[1][4] + " "
+  #conteudoAtividade += '\n'
+
+  return conteudoAtividade
+
+def listarContexto(contexto):
+  '''Tarefa 11: Modifique a função listar() para ler o conteúdo do arquivo todo.txt em uma lista de strings e
+  organizar esses strings em uma lista de tuplas, usando a função organizar().'''
+  
+  fp = open(TODO_FILE, 'r')
+  conteudo = fp.read()
+  listaDeStrings = conteudo.split('\n')
+  listaDeTuplas = organizar(listaDeStrings)
+  listaOrdenada = ordenarPorPrioridade(ordenarPorDataHora(listaDeTuplas))
+
+  contador = 0
+  while contador < len(listaOrdenada) - 1:
+    if listaOrdenada[1][3] != contexto:
+      listaOrdenada.pop(contador)
+    contador += 1
+
+  '''Tarefa 14:Modifique a função listar()para que liste as atividades no 
+  arquivo todo.txt. Os itens devem serlistados na ordem 
+  definida anteriormente, com itens nas prioridades A-D
+  aparecendo em cores e itens com priori-dadeAtambém em negrito. 
+  Além disso, deve aparecer a numeração dos 
+  itens, como explicado antes nesta seção,de 
+  modo que possa ser usada pelas funções da próxima seção.'''
+  listaComCores = colorir(listaOrdenada)
+  listaComAEmNegrito = AEmNegrito(listaComCores)
+  listaComNumeracao = numeracao(listaComAEmNegrito)
+  return listaComNumeracao
+
+def AEmNegrito(lista):
+  contador = 0
+  while contador <= len(lista) - 1:
+    prioridade = lista[contador][1][2]
+    if lista[contador][1][2] != "":
+      prioridade = BOLD+lista[contador][1][2]+RESET
+    lista[contador] = (lista[contador][0], (
+      lista[contador][1][0],
+      lista[contador][1][1],
+      prioridade,
+      lista[contador][1][3],
+      lista[contador][1][4]))
+    contador += 1
+  return lista
+
+def colorir(lista):
+  contador = 0
+  while contador <= len(lista) - 1:
+    prioridade = lista[contador][1][2]
+    if lista[contador][1][2] == '(A)':
+      prioridade = CYAN+lista[contador][1][2]+RESET
+    elif lista[contador][1][2] == '(B)':
+      prioridade = YELLOW+lista[contador][1][2]+RESET
+    elif lista[contador][1][2] == '(C)':
+      prioridade = GREEN+lista[contador][1][2]+RESET
+    elif lista[contador][1][2] == '(D)':
+      prioridade = BLUE+lista[contador][1][2]+RESET
+
+    lista[contador] = (lista[contador][0], (
+      lista[contador][1][0],
+      lista[contador][1][1],
+      prioridade,
+      lista[contador][1][3],
+      lista[contador][1][4]))
+
+    contador += 1
+  return lista
+
+def numeracao(lista):
+  contador = 0
+  while contador < len(lista) - 1:
+    lista[contador] = (
+      str(contador + 1) + " - " + lista[contador][0],
+      (
+        lista[contador][1][0],
+        lista[contador][1][1],
+        lista[contador][1][2],
+        lista[contador][1][3],
+        lista[contador][1][4]
+      ))
+    contador += 1
+  return lista
 
 def ordemDataHora(itens):
   # Criado pelo aluno
@@ -276,6 +395,12 @@ def ordenarPorDataHora(itens):
   itens.sort(key=ordemDataHora, reverse=True)
   return itens
    
+def ordemPrioridade(itens):
+  if str(itens[1][2]) == '' :
+    return '0'
+  else:
+    return itens[1][2]
+    
 def ordenarPorPrioridade(itens):
   '''Tarefa 13: Construa uma função ordenarPorPrioridade() que, dada uma lista de itens como a produzida por
   organizar(), devolve uma lista que tem os mesmos itens, ordenados com base em suas prioridades, onde itens com
@@ -292,32 +417,126 @@ def ordenarPorPrioridade(itens):
   22052017 (B)
   ou seja, o item com a prioridade A passou a aparecer primeiro mas os itens com prioridade B continuam apresentando
    a mesma ordem entre si. Modifique a função listar() que faça uso de ordenarPorPrioridade().'''
-  
-  for item in itens:
-    prioridade = item[2]
-
-
+  itens.sort(key=ordemPrioridade, reverse=False)
   return itens
 
 def fazer(num):
+  '''Tarefa 20:Construa a funçãofazer()que, dados o númeroNde uma atividade, marca essa atividade comofeita. 
+  Isso significa que a atividade é removida dotodo.txte movida para odone.txt.'''
 
-  ################ COMPLETAR
+  fp = open(TODO_FILE, 'r')
+  conteudo = fp.read()
+  listaDeStrings = conteudo.split('\n')
+  listaDeTuplas = organizar(listaDeStrings)
+  listaOrdenada = ordenarPorPrioridade(ordenarPorDataHora(listaDeTuplas))
 
-  return 
+  if len(listaOrdenada) >= num:
+    conteudoAtividade = ""
 
-def remover():
+    if listaOrdenada[num - 1][1][0] != "":
+      conteudoAtividade += listaOrdenada[num - 1][1][0] + " "
+    elif listaOrdenada[num - 1][1][1] != "":
+      conteudoAtividade += listaOrdenada[num - 1][1][1] + " "
+    elif listaOrdenada[num - 1][1][2] != "":
+      conteudoAtividade += listaOrdenada[num - 1][1][2] + " "
+    elif listaOrdenada[num - 1][0] != "":
+      conteudoAtividade += listaOrdenada[num - 1][0] + " "
+    elif listaOrdenada[num - 1][1][3] != "":
+      conteudoAtividade += listaOrdenada[num - 1][1][3] + " "
+    elif listaOrdenada[num - 1][1][4] != "":
+      conteudoAtividade += listaOrdenada[num - 1][1][4] + " "
+    conteudoAtividade += '\n'
+  else:
+    print("Atividade inexistente")
+    return False
 
-  ################ COMPLETAR
+  # Escreve no ARCHIVE_FILE. 
+  try: 
+    fp = open(ARCHIVE_FILE, 'w')
+    fp.write(conteudoAtividade + "\n")
+    fp.close()
+    remover(num)
+    print("Atividade marcada como feita.")
+  
+  except IOError as err:
+    print("Não foi possível escrever para o arquivo " + ARCHIVE_FILE)
+    print(err)
+    return False
 
-  return
+  return True
+
+def listarApenas(lista):
+  valor = ""
+  for item in lista:
+    if item[1][0] != "":
+      valor += item[1][0]+" "
+    if item[1][1] != "":
+      valor += item[1][1]+" "
+    if item[1][2] != "":
+      valor += item[1][2]+" "
+    if item[0] != "":
+      valor += item[0]+" "
+    if item[1][3] != "":
+      valor += item[1][3]+" "
+    if item[1][4] != "":
+      valor += item[1][4]+" "
+    valor += '\n'
+  return valor
+
+def remover(numeroDoItem):
+  '''Tarefa 16:Construa a função remover() que, dado o número de uma
+   atividade, remove essa atividade do ar-quivotodo.txt. Se a atividade com 
+  esse número não existir, a função deve imprimir uma mensagem de erro.'''
+  
+  fp = open(TODO_FILE, 'r')
+  conteudo = fp.read()
+  listaDeStrings = conteudo.split('\n')
+  listaDeTuplas = ordenarPorPrioridade(ordenarPorDataHora(organizar(listaDeStrings)))
+
+  try:
+    listaDeTuplas.pop(numeroDoItem - 1)
+  except:
+    print("Essa atividade não existe.")
+    return False
+
+  conteudoReal = listarApenas(listaDeTuplas)
+
+  fp2 = open(TODO_FILE, 'w')
+  fp2.write(conteudoReal)
+  #print("Deletado")
+  return True
 
 # prioridade é uma letra entre A a Z, onde A é a mais alta e Z a mais baixa.
 # num é o número da atividade cuja prioridade se planeja modificar, conforme
 # exibido pelo comando 'l'. 
 def priorizar(num, prioridade):
+  '''Tarefa 18:Construa a funçãopriorizar()que, dados o númeroNde uma atividade e uma prioridadeP,modifica a prioridade dessa atividadeNpara que se torne
+  P. Se essa atividade já tiver outra prioridade, ela é
+  sobrescrita. Se a atividade não existir, a função deve imprimir uma mensagem de erro.'''
 
-  ################ COMPLETAR
+  fp = open(TODO_FILE, 'r')
+  conteudo = fp.read()
+  listaDeStrings = conteudo.split('\n')
+  listaDeTuplas = ordenarPorPrioridade(ordenarPorDataHora(organizar(listaDeStrings)))
+  
+  try:
+    listaDeTuplas[num - 1] = (
+      listaDeTuplas[num - 1][0], #desc
+      (listaDeTuplas[num - 1][1][0], #data
+      listaDeTuplas[num - 1][1][1], #hora
+      "("+str(prioridade).upper()+")", #pri
+      listaDeTuplas[num - 1][1][3], #cont
+      listaDeTuplas[num - 1][1][4]#proj
+      ))
+  except:
+    print("Essa atividade não existe.")
+    return
+  
+  conteudoReal = listarApenas(listaDeTuplas)
 
+  fp2 = open(TODO_FILE, 'w')
+  fp2.write(conteudoReal)
+  print("Alterado")
   return 
 
 
@@ -340,20 +559,39 @@ def processarComandos(comandos) :
   elif comandos[1] == LISTAR:
     '''Tarefa 10: Modifique a função processarComandos() para que, ao receber o comando l, invoque a função
     listar().''' 
+    '''Opcional 0:Modifique seu programa para que o usuário também possa passar um critério de filtragem ao invocaro programa com o comandol. 
+    Esse critério de filtragem pode ser uma prioridade, um contexto ou um projeto e o comando l
+    nestes casos deve listar apenas as atividades que têm essa mesma prioridade, contexto ou projeto.'''
+    if len(comandos) > 2:
+      if contextoValido(comandos[2]):
+        listarContexto(comandos[2])
+        return
     listar()
     return
 
   elif comandos[1] == REMOVER:
+    '''Tarefa 15:Modifique a função processarComandos()
+     para que, ao receber o comandore o número de umaatividade, invoque a função
+    remover() passando esse número como parâmetro.'''
+    if remover(int(comandos[2])):
+      print("Deletado")
     return    
 
     ################ COMPLETAR    
 
   elif comandos[1] == FAZER:
+    '''Tarefa 19:Modifique a funçãoprocessarComandos()para que, ao receber o comandofe o número de umaatividade, invoque a função fazer()
+    passando esse número como parâmetro.'''
+    fazer(int(comandos[2]))
     return    
 
     ################ COMPLETAR
 
   elif comandos[1] == PRIORIZAR:
+    '''Tarefa 17:Modifique a funçãoprocessarComandos()para que, ao receber o comandop, o número de uma ati-vidade
+     e um caractere (maiúsculo ou minúsculo) correspondendo a uma prioridade, invoque a funçãopriorizar()
+    passando esse número e esse caractere como parâmetros.'''
+    priorizar(int(comandos[2]), comandos[3])
     return    
 
     ################ COMPLETAR
@@ -372,7 +610,7 @@ def processarComandos(comandos) :
 #
 # ['agenda.py', 'a', 'Mudar', 'de', 'nome']
 
-#processarComandos(sys.argv)
+processarComandos(sys.argv)
 
 def debuger(comandos):
   if comandos[1] == 'h':
@@ -397,4 +635,4 @@ def debuger(comandos):
     return  processarComandos(comandos)
   
 
-print(debuger(sys.argv))
+#print(debuger(sys.argv))
