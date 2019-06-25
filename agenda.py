@@ -229,9 +229,9 @@ def organizar(linhas):
         tokens.pop(0)
     
     if len(tokens) > 0:
-      if projetoValido(tokens[(len(tokens)-1)]):
-        projeto = tokens[(len(tokens)-1)]
-        tokens.pop((len(tokens)-1))
+      if projetoValido(tokens[(len(tokens)-12)]):
+        projeto = tokens[(len(tokens)-2)]
+        tokens.pop((len(tokens)-2))
 
     if len(tokens) > 0:
       if contextoValido(tokens[(len(tokens)-1)]):
@@ -365,6 +365,7 @@ def buscar(ideal):
   emLista = 0
   for item in listaOrdenada:
     if item[0] != "":
+      
       if ( 
         verify(item[1][0] == ideal[1][0],ideal[1][0]) and
         verify(item[1][1] == ideal[1][1],ideal[1][1]) and

@@ -1,8 +1,7 @@
-23062019 2330 (A) Alterar sistema @Casa +CorreÃ§Ãµes 
-23062019 2330 (A) Alterar sistema @Casa +CorreÃ§Ãµes 
-(A) R +Service 
-(A) Revisar artigos SBES Education +Service 
-(A) Revisar artigos SBES +Service 
-(B) Terminar a especificaÃ§Ã£o do projeto de IF968. +IF968 
-(B) Publicar a especificaÃ§Ã£o do projeto de IF968 terminada. +IF968 
-23032019 teste +a 
+Desenvolver protótipo de artigo falando sobre o EndDevice +TechPark @Dexter 
+Conversar com Diego sobre software do Inclinômetro +Inclinômetro @Dexter 
+Conversar com Diego sobre software do Inclinômetro +Inclinômetro @Dexter 
+Conversar com Diego sobre software do Inclinômetro +Inclinômetro @Dexter 
+Conversar com Diego sobre software do Inclinômetro +Inclinômetro @Dexter 
+Conversar com Diego sobre software do Inclinômetro +Inclinômetro @Dexter 
+Conversar com Diego sobre software do Inclinômetro +Inclinômetro @Dexter 
