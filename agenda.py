@@ -229,9 +229,9 @@ def organizar(linhas):
         tokens.pop(0)
     
     if len(tokens) > 0:
-      if projetoValido(tokens[(len(tokens)-12)]):
-        projeto = tokens[(len(tokens)-2)]
-        tokens.pop((len(tokens)-2))
+      if projetoValido(tokens[(len(tokens)-1)]):
+        projeto = tokens[(len(tokens)-1)]
+        tokens.pop((len(tokens)-1))
 
     if len(tokens) > 0:
       if contextoValido(tokens[(len(tokens)-1)]):
@@ -660,6 +660,10 @@ def remover(numeroDoItem):
    atividade, remove essa atividade do ar-quivotodo.txt. Se a atividade com 
   esse número não existir, a função deve imprimir uma mensagem de erro.'''
   
+  if numeroDoItem <= 0:
+    print("O id da atividade deve ser maior ou igual a 1.")
+    return False
+
   try:
     fp = open(TODO_FILE, 'r')
     conteudo = fp.read()
@@ -774,9 +778,9 @@ def processarComandos(comandos) :
         elif(prioridadeValida(comandos[0])):
           ideal = (ideal[0], (ideal[1][0], ideal[1][1], comandos[0].upper(), ideal[1][3], ideal[1][4]))
           comandos.pop(0)
-        elif(contextoValido(comandos[len(comandos) - 2])):
+        elif(contextoValido(comandos[len(comandos) - 1])):
           ideal = (ideal[0], (ideal[1][0], ideal[1][1], ideal[1][2], comandos[0], ideal[1][4]))
-          comandos.pop(len(comandos) - 2)
+          comandos.pop(len(comandos) - 1)
         elif(projetoValido(comandos[len(comandos) - 1])):
           ideal = (ideal[0], (ideal[1][0], ideal[1][1], ideal[1][2], ideal[1][3], comandos[0]))
           comandos.pop(len(comandos) - 1)
@@ -805,6 +809,7 @@ def processarComandos(comandos) :
     '''Tarefa 15:Modifique a função processarComandos()
      para que, ao receber o comandore o número de umaatividade, invoque a função
     remover() passando esse número como parâmetro.'''
+    
     if len(comandos) < 3:
       print("Você não especificou qual atividade deve ser removida.")
       return
