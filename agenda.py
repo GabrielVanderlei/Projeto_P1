@@ -602,15 +602,15 @@ def fazer(num):
 
     if listaOrdenada[num - 1][1][0] != "":
       conteudoAtividade += listaOrdenada[num - 1][1][0] + " "
-    elif listaOrdenada[num - 1][1][1] != "":
+    if listaOrdenada[num - 1][1][1] != "":
       conteudoAtividade += listaOrdenada[num - 1][1][1] + " "
-    elif listaOrdenada[num - 1][1][2] != "":
+    if listaOrdenada[num - 1][1][2] != "":
       conteudoAtividade += listaOrdenada[num - 1][1][2] + " "
-    elif listaOrdenada[num - 1][0] != "":
+    if listaOrdenada[num - 1][0] != "":
       conteudoAtividade += listaOrdenada[num - 1][0] + " "
-    elif listaOrdenada[num - 1][1][3] != "":
+    if listaOrdenada[num - 1][1][3] != "":
       conteudoAtividade += listaOrdenada[num - 1][1][3] + " "
-    elif listaOrdenada[num - 1][1][4] != "":
+    if listaOrdenada[num - 1][1][4] != "":
       conteudoAtividade += listaOrdenada[num - 1][1][4] + " "
     conteudoAtividade += '\n'
   else:
@@ -620,8 +620,11 @@ def fazer(num):
   # Escreve no ARCHIVE_FILE. 
   try: 
     try:
+      fpl = open(ARCHIVE_FILE, 'r')
+      content = fpl.read()
+
       fp = open(ARCHIVE_FILE, 'w')
-      fp.write(conteudoAtividade + "\n")
+      fp.write(content+conteudoAtividade)
       fp.close()
     except:
       print("O arquivo ",ARCHIVE_FILE," não existe.")
