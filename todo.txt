@@ -2,7 +2,6 @@
 23062019 2330 (A) Alterar sistema @Casa +Correções 
 (A) R +Service 
 (A) Revisar artigos SBES Education +Service 
+(A) Revisar artigos SBES +Service 
 (B) Terminar a especificação do projeto de IF968. +IF968 
 (B) Publicar a especificação do projeto de IF968 terminada. +IF968 
-(B) Revisar artigo IST +Service 
-(Z) Revisar artigos SBES +Service 

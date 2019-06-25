@@ -1,4 +1,5 @@
 import sys
+import os
 
 TODO_FILE = 'todo.txt'
 ARCHIVE_FILE = 'done.txt'
@@ -48,6 +49,7 @@ def adicionar(descricao, extras):
 
   # não é possível adicionar uma atividade que não possui descrição. 
   if descricao  == '' :
+    print("Descrição em branco, não foi possível adicionar a atividade.")
     return False
   
   # data, hora, prioridade, contexto, projeto
@@ -548,8 +550,12 @@ def priorizar(num, prioridade):
 # usando o método strip(). Além disso, realiza a validação de horas, datas, prioridades, contextos e
 # projetos. 
 def processarComandos(comandos) :
-
   if comandos[1] == ADICIONAR:
+    
+    if len(comandos) < 3:
+      print("Você não colocou a quantidade mínima de parâmetros para se adicionar uma atividade.")
+      return
+
     comandos.pop(0) # remove 'agenda.py'
     comandos.pop(0) # remove 'adicionar'
     itemParaAdicionar = organizar([' '.join(comandos)])[0]
@@ -573,6 +579,9 @@ def processarComandos(comandos) :
     '''Tarefa 15:Modifique a função processarComandos()
      para que, ao receber o comandore o número de umaatividade, invoque a função
     remover() passando esse número como parâmetro.'''
+    if len(comandos) < 3:
+      print("Você não especificou qual atividade deve ser removida.")
+      return
     if remover(int(comandos[2])):
       print("Deletado")
     return    
@@ -582,6 +591,9 @@ def processarComandos(comandos) :
   elif comandos[1] == FAZER:
     '''Tarefa 19:Modifique a funçãoprocessarComandos()para que, ao receber o comandofe o número de umaatividade, invoque a função fazer()
     passando esse número como parâmetro.'''
+    if len(comandos) < 3:
+      print("Você não especificou qual atividade deve ser marcada como feita.")
+      return
     fazer(int(comandos[2]))
     return    
 
@@ -591,6 +603,13 @@ def processarComandos(comandos) :
     '''Tarefa 17:Modifique a funçãoprocessarComandos()para que, ao receber o comandop, o número de uma ati-vidade
      e um caractere (maiúsculo ou minúsculo) correspondendo a uma prioridade, invoque a funçãopriorizar()
     passando esse número e esse caractere como parâmetros.'''
+    if len(comandos) < 3:
+      print("Você não especificou qual atividade deve ser priorizada.")
+      return
+
+    if len(comandos) < 4:
+      print("Você não especificou qual o nível de prioridade da atividade.")
+      return
     priorizar(int(comandos[2]), comandos[3])
     return    
 
