@@ -257,8 +257,13 @@ def listar():
   '''Tarefa 11: Modifique a função listar() para ler o conteúdo do arquivo todo.txt em uma lista de strings e
   organizar esses strings em uma lista de tuplas, usando a função organizar().'''
   
-  fp = open(TODO_FILE, 'r')
-  conteudo = fp.read()
+  try:
+    fp = open(TODO_FILE, 'r')
+    conteudo = fp.read()
+  except:
+    print("O Arquivo ",TODO_FILE, " não existe nessa instalação.")
+    return
+
   listaDeStrings = conteudo.split('\n')
   listaDeTuplas = organizar(listaDeStrings)
   listaOrdenada = ordenarPorPrioridade(ordenarPorDataHora(listaDeTuplas))
@@ -273,20 +278,24 @@ def listar():
   listaComCores = colorir(listaOrdenada)
   listaComAEmNegrito = AEmNegrito(listaComCores)
 
-  contador = 0
-  for item in listaComAEmNegrito:
-    if item[0] != "":
-      print(str(contador + 1) + " - " + montarAtividade(item))
-    contador += 1
+  mostrarAtividades(listaComAEmNegrito)
   return 
+
+
+
+def formatarData(data):
+  return str(data[0:2])+"/"+str(data[2:4])+"/"+str(data[4:8])
+
+def formatarHora(data):
+  return str(data[0:2])+":"+str(data[2:4])
 
 def montarAtividade(item):
   conteudoAtividade = ""
 
   if item[1][0] != "":
-    conteudoAtividade += item[1][0] + " "
+    conteudoAtividade += formatarData(item[1][0]) + " "
   if item[1][1] != "":
-    conteudoAtividade += item[1][1] + " "
+    conteudoAtividade += formatarHora(item[1][1]) + " "
   if item[1][2] != "":
     conteudoAtividade += item[1][2] + " "
   if item[0] != "":
@@ -303,17 +312,21 @@ def listarContexto(contexto):
   '''Tarefa 11: Modifique a função listar() para ler o conteúdo do arquivo todo.txt em uma lista de strings e
   organizar esses strings em uma lista de tuplas, usando a função organizar().'''
   
-  fp = open(TODO_FILE, 'r')
-  conteudo = fp.read()
+  try:
+    fp = open(TODO_FILE, 'r')
+    conteudo = fp.read()
+  except:
+    print("O Arquivo ",TODO_FILE, " não existe nessa instalação.")
+    return
   listaDeStrings = conteudo.split('\n')
   listaDeTuplas = organizar(listaDeStrings)
   listaOrdenada = ordenarPorPrioridade(ordenarPorDataHora(listaDeTuplas))
 
-  contador = 0
-  while contador < len(listaOrdenada) - 1:
-    if listaOrdenada[1][3] != contexto:
+  '''contador = 0
+  while contador < len(listaOrdenada):
+    if listaOrdenada[contador][1][3] != contexto:
       listaOrdenada.pop(contador)
-    contador += 1
+    contador += 1'''
 
   '''Tarefa 14:Modifique a função listar()para que liste as atividades no 
   arquivo todo.txt. Os itens devem serlistados na ordem 
@@ -325,7 +338,122 @@ def listarContexto(contexto):
   listaComCores = colorir(listaOrdenada)
   listaComAEmNegrito = AEmNegrito(listaComCores)
   listaComNumeracao = numeracao(listaComAEmNegrito)
-  return listaComNumeracao
+
+  if(len(listaComNumeracao) == 0):
+    print("Nenhuma atividade cadastrada.")
+    return
+
+  mostrarAtividadesComContexto(listaComNumeracao, contexto)
+  return
+
+def buscar(ideal):
+  try:
+    fp = open(TODO_FILE, 'r')
+    conteudo = fp.read()
+  except:
+    print("O Arquivo ",TODO_FILE, " não existe nessa instalação.")
+    return
+  listaDeStrings = conteudo.split('\n')
+  listaDeTuplas = organizar(listaDeStrings)
+  listaOrdenada = ordenarPorPrioridade(ordenarPorDataHora(listaDeTuplas))
+
+  #listaComCores = colorir(listaOrdenada)
+  #listaComAEmNegrito = AEmNegrito(listaComCores)
+  #listaComNumeracao = numeracao(listaComAEmNegrito)
+  
+  contador = 0
+  emLista = 0
+  for item in listaOrdenada:
+    if item[0] != "":
+      if ( 
+        verify(item[1][0] == ideal[1][0],ideal[1][0]) and
+        verify(item[1][1] == ideal[1][1],ideal[1][1]) and
+        verify(item[1][2] == ideal[1][2],ideal[1][2]) and 
+        verify(item[1][3] == ideal[1][3],ideal[1][3]) and 
+        verify(item[1][4] == ideal[1][4],ideal[1][4]) and 
+        contem(ideal[0], item[0])
+      ):
+        print(str(contador + 1) + " - " + montarAtividade(
+          (AEmNegrito(
+            colorir([item])
+            )
+          )[0]))
+        emLista += 1
+    contador += 1
+
+  if emLista == 0:
+    print("Nenhuma atividade com essas configurações foi localizada.")
+  return
+
+def verify(condition, value):
+  if value == '':
+    return True
+  return condition
+
+def contem(textoABuscar, textoOriginal):
+  if textoABuscar == '':
+    return True
+  return textoABuscar in textoOriginal
+
+def listarProjeto(projeto):
+  try:
+    fp = open(TODO_FILE, 'r')
+    conteudo = fp.read()
+  except:
+    print("O Arquivo ",TODO_FILE, " não existe nessa instalação.")
+    return
+  listaDeStrings = conteudo.split('\n')
+  listaDeTuplas = organizar(listaDeStrings)
+  listaOrdenada = ordenarPorPrioridade(ordenarPorDataHora(listaDeTuplas))
+
+  listaComCores = colorir(listaOrdenada)
+  listaComAEmNegrito = AEmNegrito(listaComCores)
+  listaComNumeracao = numeracao(listaComAEmNegrito)
+
+  if(len(listaComNumeracao) == 0):
+    print("Nenhuma atividade com o contexto exigido foi localizada.")
+    return
+
+  mostrarAtividadesComProjeto(listaComNumeracao, projeto)
+  return
+
+
+def mostrarAtividades(atividades):
+  contador = 0
+  for item in atividades:
+    if item[0] != "":
+      print(str(contador + 1) + " - " + montarAtividade(item))
+    contador += 1
+  return
+
+def mostrarAtividadesComContexto(atividades, contexto):
+  contador = 0
+  emLista = 0
+  for item in atividades:
+    if item[0] != "":
+      if item[1][3] == contexto:
+        print(str(contador + 1) + " - " + montarAtividade(item))
+        emLista += 1
+    contador += 1
+
+  if emLista == 0:
+    print("Nenhuma atividade com esse contexto foi localizda.")
+  return
+
+
+def mostrarAtividadesComProjeto(atividades, projeto):
+  contador = 0
+  emLista = 0
+  for item in atividades:
+    if item[0] != "":
+      if item[1][4] == projeto:
+        print(str(contador + 1) + " - " + montarAtividade(item))
+        emLista += 1
+    contador += 1
+    
+  if emLista == 0:
+    print("Nenhuma atividade com esse projeto foi localizda.")
+  return
 
 def AEmNegrito(lista):
   contador = 0
@@ -426,8 +554,13 @@ def fazer(num):
   '''Tarefa 20:Construa a funçãofazer()que, dados o númeroNde uma atividade, marca essa atividade comofeita. 
   Isso significa que a atividade é removida dotodo.txte movida para odone.txt.'''
 
-  fp = open(TODO_FILE, 'r')
-  conteudo = fp.read()
+  try:
+    fp = open(TODO_FILE, 'r')
+    conteudo = fp.read()
+  except:
+    print("O Arquivo ",TODO_FILE, " não existe nessa instalação.")
+    return
+
   listaDeStrings = conteudo.split('\n')
   listaDeTuplas = organizar(listaDeStrings)
   listaOrdenada = ordenarPorPrioridade(ordenarPorDataHora(listaDeTuplas))
@@ -454,9 +587,14 @@ def fazer(num):
 
   # Escreve no ARCHIVE_FILE. 
   try: 
-    fp = open(ARCHIVE_FILE, 'w')
-    fp.write(conteudoAtividade + "\n")
-    fp.close()
+    try:
+      fp = open(ARCHIVE_FILE, 'w')
+      fp.write(conteudoAtividade + "\n")
+      fp.close()
+    except:
+      print("O arquivo ",ARCHIVE_FILE," não existe.")
+      return
+
     remover(num)
     print("Atividade marcada como feita.")
   
@@ -490,8 +628,13 @@ def remover(numeroDoItem):
    atividade, remove essa atividade do ar-quivotodo.txt. Se a atividade com 
   esse número não existir, a função deve imprimir uma mensagem de erro.'''
   
-  fp = open(TODO_FILE, 'r')
-  conteudo = fp.read()
+  try:
+    fp = open(TODO_FILE, 'r')
+    conteudo = fp.read()
+  except:
+    print("O arquivo ", TODO_FILE, " não foi encontrado.")
+    return
+
   listaDeStrings = conteudo.split('\n')
   listaDeTuplas = ordenarPorPrioridade(ordenarPorDataHora(organizar(listaDeStrings)))
 
@@ -503,8 +646,12 @@ def remover(numeroDoItem):
 
   conteudoReal = listarApenas(listaDeTuplas)
 
-  fp2 = open(TODO_FILE, 'w')
-  fp2.write(conteudoReal)
+  try:
+    fp2 = open(TODO_FILE, 'w')
+    fp2.write(conteudoReal)
+  except:
+    print("O arquivo ", TODO_FILE, " não foi encontrado.")
+    return
   #print("Deletado")
   return True
 
@@ -516,8 +663,13 @@ def priorizar(num, prioridade):
   P. Se essa atividade já tiver outra prioridade, ela é
   sobrescrita. Se a atividade não existir, a função deve imprimir uma mensagem de erro.'''
 
-  fp = open(TODO_FILE, 'r')
-  conteudo = fp.read()
+  try:
+    fp = open(TODO_FILE, 'r')
+    conteudo = fp.read()
+  except:
+    print("O arquivo ", TODO_FILE, " não foi localizado.")
+    return
+
   listaDeStrings = conteudo.split('\n')
   listaDeTuplas = ordenarPorPrioridade(ordenarPorDataHora(organizar(listaDeStrings)))
   
@@ -536,9 +688,12 @@ def priorizar(num, prioridade):
   
   conteudoReal = listarApenas(listaDeTuplas)
 
-  fp2 = open(TODO_FILE, 'w')
-  fp2.write(conteudoReal)
-  print("Alterado")
+  try:
+    fp2 = open(TODO_FILE, 'w')
+    fp2.write(conteudoReal)
+    print("Alterado")
+  except:
+    print("O arquivo ",TODO_FILE," não existe.")
   return 
 
 
@@ -569,9 +724,48 @@ def processarComandos(comandos) :
     Esse critério de filtragem pode ser uma prioridade, um contexto ou um projeto e o comando l
     nestes casos deve listar apenas as atividades que têm essa mesma prioridade, contexto ou projeto.'''
     if len(comandos) > 2:
-      if contextoValido(comandos[2]):
+      ideal = ('', ('','','','',''))
+      contador = 0
+      descricao = ''
+
+      comandos.pop(0)
+      comandos.pop(0)
+      total = len(comandos)
+
+      while(total > contador):
+        if(dataValida(comandos[0])):
+          ideal = (ideal[0], (comandos[0], ideal[1][1], ideal[1][2], ideal[1][3], ideal[1][4]))
+          comandos.pop(0)
+        elif(horaValida(comandos[0])):
+          ideal = (ideal[0], (ideal[1][0], comandos[0], ideal[1][2], ideal[1][3], ideal[1][4]))
+          comandos.pop(0)
+        elif(prioridadeValida(comandos[0])):
+          ideal = (ideal[0], (ideal[1][0], ideal[1][1], comandos[0].upper(), ideal[1][3], ideal[1][4]))
+          comandos.pop(0)
+        elif(contextoValido(comandos[len(comandos) - 2])):
+          ideal = (ideal[0], (ideal[1][0], ideal[1][1], ideal[1][2], comandos[0], ideal[1][4]))
+          comandos.pop(len(comandos) - 2)
+        elif(projetoValido(comandos[len(comandos) - 1])):
+          ideal = (ideal[0], (ideal[1][0], ideal[1][1], ideal[1][2], ideal[1][3], comandos[0]))
+          comandos.pop(len(comandos) - 1)
+        contador += 1
+      
+      if len(comandos) > 0:
+        descricao = ' '.join(comandos)
+        ideal = (descricao, (ideal[1][0], ideal[1][1], ideal[1][2], ideal[1][3], ideal[1][4]))
+
+      buscar(ideal)
+      return
+
+      '''if contextoValido(comandos[2]):
         listarContexto(comandos[2])
         return
+      elif projetoValido(comandos[2]):
+        listarProjeto(comandos[2])
+        return
+      else:
+        print("Contexto inválido.")
+        return'''
     listar()
     return
 
