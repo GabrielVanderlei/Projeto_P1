@@ -373,17 +373,33 @@ def buscar(ideal):
         verify(item[1][4] == ideal[1][4],ideal[1][4]) and 
         contem(ideal[0], item[0])
       ):
-        print(str(contador + 1) + " - " + montarAtividade(
+        printAtividade(
+          (str(contador + 1) + " - " + montarAtividade(
           (AEmNegrito(
             colorir([item])
             )
-          )[0]))
+          )[0])), item)
         emLista += 1
     contador += 1
 
   if emLista == 0:
     print("Nenhuma atividade com essas configurações foi localizada.")
   return
+
+def printAtividade(texto, item):
+  if item[0] != "":  
+    if item[1][2] == '(A)':
+      print(BOLD + CYAN + texto + RESET + RESET)
+    elif item[1][2] == '(B)':
+      print(YELLOW + texto + RESET)
+    elif item[1][2] == '(C)':
+      print(GREEN + texto + RESET)
+    elif item[1][2] == '(D)':
+      print(BLUE + texto + RESET)
+    else:
+      print(texto)
+  return
+
 
 def verify(condition, value):
   if value == '':
@@ -421,8 +437,17 @@ def listarProjeto(projeto):
 def mostrarAtividades(atividades):
   contador = 0
   for item in atividades:
-    if item[0] != "":
-      print(str(contador + 1) + " - " + montarAtividade(item))
+    if item[0] != "":  
+      if item[1][2] == '(A)':
+        print(BOLD + CYAN + str(contador + 1) + " - " + montarAtividade(item) + RESET + RESET)
+      elif item[1][2] == '(B)':
+        print(YELLOW + str(contador + 1) + " - " + montarAtividade(item) + RESET)
+      elif item[1][2] == '(C)':
+        print(GREEN + str(contador + 1) + " - " + montarAtividade(item) + RESET)
+      elif item[1][2] == '(D)':
+        print(BLUE + str(contador + 1) + " - " + montarAtividade(item) + RESET)
+      else:
+        print(str(contador + 1) + " - " + montarAtividade(item))
     contador += 1
   return
 
@@ -456,32 +481,38 @@ def mostrarAtividadesComProjeto(atividades, projeto):
   return
 
 def AEmNegrito(lista):
+  # Função interpretada incorretamente
+  # Atualmente ela não modifica nada
+
   contador = 0
   while contador <= len(lista) - 1:
     prioridade = lista[contador][1][2]
-    if lista[contador][1][2] != "":
+    '''if lista[contador][1][2] != "":
       prioridade = BOLD+lista[contador][1][2]+RESET
     lista[contador] = (lista[contador][0], (
       lista[contador][1][0],
       lista[contador][1][1],
       prioridade,
       lista[contador][1][3],
-      lista[contador][1][4]))
+      lista[contador][1][4]))'''
     contador += 1
   return lista
 
 def colorir(lista):
+  # Essa função foi interpretada incorretamente na hora do desenvolvimento.
+  # Por isso atualmente ela não realiza nenhuma modificação
+  
   contador = 0
   while contador <= len(lista) - 1:
     prioridade = lista[contador][1][2]
-    if lista[contador][1][2] == '(A)':
+    '''if lista[contador][1][2] == '(A)':
       prioridade = CYAN+lista[contador][1][2]+RESET
     elif lista[contador][1][2] == '(B)':
       prioridade = YELLOW+lista[contador][1][2]+RESET
     elif lista[contador][1][2] == '(C)':
       prioridade = GREEN+lista[contador][1][2]+RESET
     elif lista[contador][1][2] == '(D)':
-      prioridade = BLUE+lista[contador][1][2]+RESET
+      prioridade = BLUE+lista[contador][1][2]+RESET'''
 
     lista[contador] = (lista[contador][0], (
       lista[contador][1][0],
